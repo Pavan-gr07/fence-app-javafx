@@ -9,29 +9,56 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0"
+<AnchorPane prefHeight="500.0" prefWidth="600.0"
             xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.fencedeviceapp.Controller">
     <children>
         <VBox layoutX="50.0" layoutY="50.0" spacing="15.0">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
             <children>
                 <!-- IP Input and Connect Button -->
-                <HBox spacing="10.0">
+                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                    <padding>
+                        <Insets top="5" right="5" bottom="5" left="5"/>
+                    </padding>
                     <children>
-                        <Label text="Enter IP Address"/>
-                        <TextField fx:id="ipField" promptText="e.g., 192.168.1.100"/>
-                        <Button text="Connect" onAction="#handleConnect"/>
+                        <Label text="Enter IP Address" minWidth="100"/>
+                        <TextField fx:id="ipField" promptText="e.g., 192.168.1.100" minWidth="200"/>
+                        <Button text="Connect" onAction="#handleConnect" prefWidth="100"/>
                     </children>
                 </HBox>
 
-                <!-- Container to dynamically insert status indicators -->
-                <VBox fx:id="statusContainer" >
+                <!-- Container for HTTP Controls -->
+                <VBox fx:id="controlsContainer" spacing="10">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10" left="10"/>
+                    </padding>
                     <!-- Will be populated dynamically from Controller -->
                 </VBox>
 
+                <!-- Title for status section -->
+                <Label text="Device Status" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+
+                <!-- Container to dynamically insert status indicators -->
+                <VBox fx:id="statusContainer" spacing="5">
+                    <padding>
+                        <Insets top="10" right="10" bottom="10" left="10"/>
+                    </padding>
+                    <!-- Will be populated dynamically from Controller -->
+                </VBox>
+
+                <!-- Title for response section -->
+                <Label text="XML Response" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
+
                 <!-- Response Output Area -->
-                <TextArea fx:id="responseArea" prefHeight="200.0" prefWidth="500.0" wrapText="true"/>
+                <TextArea fx:id="responseArea" prefHeight="200.0" prefWidth="500.0" wrapText="true">
+                    <padding>
+                        <Insets top="5" right="5" bottom="5" left="5"/>
+                    </padding>
+                </TextArea>
             </children>
         </VBox>
     </children>

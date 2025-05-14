@@ -1,6 +1,5 @@
 package com.example.fencedeviceapp;
 
-
 public class StatusIndicator {
     private final String label;
     private final boolean status;

@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="500.0" prefWidth="600.0"
+<AnchorPane prefHeight="550.0" prefWidth="600.0"
             xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.example.fencedeviceapp.Controller">
@@ -28,6 +28,16 @@
                         <Label text="Enter IP Address" minWidth="100"/>
                         <TextField fx:id="ipField" promptText="e.g., 192.168.1.100" minWidth="200"/>
                         <Button text="Connect" onAction="#handleConnect" prefWidth="100"/>
+                    </children>
+                </HBox>
+
+                <!-- Status indicator for connection -->
+                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                    <padding>
+                        <Insets top="5" right="5" bottom="5" left="5"/>
+                    </padding>
+                    <children>
+                        <Label text="Auto-refresh: Every 3 seconds" style="-fx-font-style: italic; -fx-text-fill: #555555;"/>
                     </children>
                 </HBox>
 
@@ -54,7 +64,7 @@
                 <Label text="XML Response" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
 
                 <!-- Response Output Area -->
-                <TextArea fx:id="responseArea" prefHeight="200.0" prefWidth="500.0" wrapText="true">
+                <TextArea fx:id="responseArea" prefHeight="180.0" prefWidth="500.0" wrapText="true">
                     <padding>
                         <Insets top="5" right="5" bottom="5" left="5"/>
                     </padding>

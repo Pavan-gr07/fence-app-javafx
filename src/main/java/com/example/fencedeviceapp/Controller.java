@@ -1,5 +1,6 @@
 package com.example.fencedeviceapp;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -21,6 +22,9 @@ import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class Controller {
@@ -37,6 +41,10 @@ public class Controller {
     private VBox controlsContainer;
     private Map<String, Boolean> deviceState = new HashMap<>();
 
+    // For periodic status updates
+    private ScheduledExecutorService scheduler;
+    private String currentIp = "";
+    private boolean isConnected = false;
     @FXML
     public void handleConnect() {
         String ip = ipField.getText().trim();
@@ -44,6 +52,9 @@ public class Controller {
             responseArea.setText("Please enter an IP address.");
             return;
         }
+
+        // Stop any existing refresh timer
+        stopRefreshTimer();
 
         String urlString = "http://" + ip + "/status.xml";
         responseArea.setText("Connecting to " + urlString + "...");
@@ -74,6 +85,12 @@ public class Controller {
                     // Create control buttons after status is updated
                     createControlButtons(ip);
                     responseArea.setText(result.toString());
+
+                    // Set connection status and start refresh timer
+                    currentIp = ip;
+                    isConnected = true;
+                    startRefreshTimer();
+
                 } catch (Exception e) {
                     responseArea.setText(result + "\n\nError parsing XML: " + e.getMessage());
                 }
@@ -221,58 +238,122 @@ public class Controller {
                     }
                     reader.close();
 
-                    // Refresh the status after changing a setting
-                    refreshDeviceStatus(ip);
+                    // Refresh the status after changing a setting - immediate refresh
+                    refreshDeviceStatus(ip, true);
                 }
 
                 // Update UI on the JavaFX thread
-                javafx.application.Platform.runLater(() -> {
+                Platform.runLater(() -> {
                     responseArea.appendText(responseText.toString());
                 });
 
                 conn.disconnect();
             } catch (Exception e) {
-                javafx.application.Platform.runLater(() -> {
+                Platform.runLater(() -> {
                     responseArea.appendText("\nError sending command: " + e.getMessage());
                 });
             }
         }).start();
     }
 
+    // Start periodic refresh of device status
+    private void startRefreshTimer() {
+        scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(() -> {
+            if (isConnected) {
+                refreshDeviceStatus(currentIp, false); // false = don't append to response area
+            }
+        }, 3, 3, TimeUnit.SECONDS); // Update every 3 seconds
+    }
+
+    // Stop the refresh timer
+    private void stopRefreshTimer() {
+        if (scheduler != null && !scheduler.isShutdown()) {
+            scheduler.shutdownNow();
+            scheduler = null;
+        }
+    }
+
+    // Clean up resources when application closes
+    public void shutdown() {
+        stopRefreshTimer();
+    }
+
     private void refreshDeviceStatus(String ip) {
+        refreshDeviceStatus(ip, true); // Default to showing in response area
+    }
+
+    private void refreshDeviceStatus(String ip, boolean showInResponseArea) {
         // Wait briefly before refreshing to allow the device to update
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+            return;
         }
 
         // Fetch the updated status
-        javafx.application.Platform.runLater(() -> {
-            try {
-                URL url = new URL("http://" + ip + "/status.xml");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
+        try {
+            URL url = new URL("http://" + ip + "/status.xml");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
 
-                int status = conn.getResponseCode();
-                if (status == 200) {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuilder xmlContent = new StringBuilder();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        xmlContent.append(line).append("\n");
+            int status = conn.getResponseCode();
+            final StringBuilder responseText = new StringBuilder();
+
+            if (status == 200) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder xmlContent = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    xmlContent.append(line).append("\n");
+                    if (showInResponseArea) {
+                        responseText.append(line).append("\n");
                     }
-                    reader.close();
-
-                    // Update UI with new status
-                    updateStatusFromResponse(xmlContent.toString());
-                    createControlButtons(ip);
                 }
+                reader.close();
 
-                conn.disconnect();
-            } catch (Exception e) {
-                responseArea.appendText("\nError refreshing status: " + e.getMessage());
+                final String xmlData = xmlContent.toString();
+
+                // Update UI with new status on JavaFX thread
+                Platform.runLater(() -> {
+                    try {
+                        // Update status display
+                        updateStatusFromResponse(xmlData);
+                        createControlButtons(ip);
+
+                        // Add to response area if requested
+                        if (showInResponseArea) {
+                            responseArea.appendText("\n\n--- Status Refresh ---\n" + responseText);
+                        }
+                    } catch (Exception e) {
+                        if (showInResponseArea) {
+                            responseArea.appendText("\nError updating status: " + e.getMessage());
+                        }
+                    }
+                });
+            } else if (showInResponseArea) {
+                final int statusCode = status;
+                Platform.runLater(() -> {
+                    responseArea.appendText("\nRefresh failed with status code: " + statusCode);
+                });
             }
-        });
+
+            conn.disconnect();
+        } catch (Exception e) {
+            if (showInResponseArea) {
+                final String errorMsg = e.getMessage();
+                Platform.runLater(() -> {
+                    responseArea.appendText("\nError refreshing status: " + errorMsg);
+                });
+            }
+
+            // If we can't connect, stop trying after several failures
+            if (e instanceof java.net.ConnectException || e instanceof java.net.SocketTimeoutException) {
+                // Connection lost - could implement a retry counter here
+            }
+        }
     }
 }

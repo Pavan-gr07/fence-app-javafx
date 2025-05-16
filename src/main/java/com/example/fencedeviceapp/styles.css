@@ -1,0 +1,54 @@
+/* style.css */
+
+.root {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-background-color: #f7f9fc;
+}
+
+.label {
+    -fx-text-fill: #333;
+    -fx-font-size: 13px;
+}
+
+.subtitle-label {
+    -fx-font-style: italic;
+    -fx-text-fill: #666;
+}
+
+.section-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2a2a2a;
+}
+
+.text-area {
+    -fx-border-color: #ccc;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+.tab-pane {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #ddd;
+    -fx-border-radius: 5px;
+}
+
+.tab-header-area {
+    -fx-background-color: #eeeeee;
+}
+
+.button {
+    -fx-background-color: #1e88e5;
+    -fx-text-fill: white;
+    -fx-background-radius: 5;
+}
+
+.button:hover {
+    -fx-background-color: #1565c0;
+}
+
+.text-field {
+    -fx-border-color: #ccc;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}

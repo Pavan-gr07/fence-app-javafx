@@ -33,13 +33,15 @@ public class Controller {
     private TextField ipField;
 
     @FXML
-    private TextArea responseArea;
+    private TextArea httpresponseArea;
 
     @FXML
-    private VBox statusContainer;
+    private VBox httpstatusContainer;
     @FXML
-    private VBox controlsContainer;
-    private Map<String, Boolean> deviceState = new HashMap<>();
+    private VBox httpcontrolsContainer;
+
+
+    private Map<String, Boolean> httpdeviceState = new HashMap<>();
 
     // For periodic status updates
     private ScheduledExecutorService scheduler;
@@ -49,7 +51,7 @@ public class Controller {
     public void handleConnect() {
         String ip = ipField.getText().trim();
         if (ip.isEmpty()) {
-            responseArea.setText("Please enter an IP address.");
+            httpresponseArea.setText("Please enter an IP address.");
             return;
         }
 
@@ -57,7 +59,7 @@ public class Controller {
         stopRefreshTimer();
 
         String urlString = "http://" + ip + "/status.xml";
-        responseArea.setText("Connecting to " + urlString + "...");
+        httpresponseArea.setText("Connecting to " + urlString + "...");
 
         try {
             URL url = new URL(urlString);
@@ -84,7 +86,7 @@ public class Controller {
                     updateStatusFromResponse(xmlContent.toString());
                     // Create control buttons after status is updated
                     createControlButtons(ip);
-                    responseArea.setText(result.toString());
+                    httpresponseArea.setText(result.toString());
 
                     // Set connection status and start refresh timer
                     currentIp = ip;
@@ -92,25 +94,25 @@ public class Controller {
                     startRefreshTimer();
 
                 } catch (Exception e) {
-                    responseArea.setText(result + "\n\nError parsing XML: " + e.getMessage());
+                    httpresponseArea.setText(result + "\n\nError parsing XML: " + e.getMessage());
                 }
             } else {
-                responseArea.setText(result + "\nFailed to connect. Check IP address and try again.");
+                httpresponseArea.setText(result + "\nFailed to connect. Check IP address and try again.");
             }
 
             conn.disconnect();
 
         } catch (Exception e) {
-            responseArea.setText("Connection Error: " + e.getMessage());
+            httpresponseArea.setText("Connection Error: " + e.getMessage());
         }
     }
 
     public void updateStatusFromResponse(String xmlResponse) throws Exception {
         List<StatusIndicator> indicators = parseXml(xmlResponse);
-        statusContainer.getChildren().clear();
+        httpstatusContainer.getChildren().clear();
 
         // Set padding for the entire status container
-        statusContainer.setStyle("-fx-padding: 10px; -fx-background-color: #f5f5f5; -fx-background-radius: 5;");
+        httpstatusContainer.setStyle("-fx-padding: 10px; -fx-background-color: #f5f5f5; -fx-background-radius: 5;");
 
         for (StatusIndicator indicator : indicators) {
             Label label = new Label(indicator.getLabel());
@@ -129,7 +131,7 @@ public class Controller {
             row.setStyle("-fx-padding: 8px; -fx-border-color: #e0e0e0; -fx-border-width: 0 0 1 0;");
             row.setPrefHeight(40); // Consistent height for each row
 
-            statusContainer.getChildren().add(row);
+            httpstatusContainer.getChildren().add(row);
         }
     }
 
@@ -138,13 +140,13 @@ public class Controller {
                 .parse(new ByteArrayInputStream(xml.getBytes()));
 
         // Store device state for controls
-        deviceState.put("IntrusionAlarm", getValue(doc, "IntrusionAlarm"));
-        deviceState.put("DrainageIntrusionAlarm", getValue(doc, "DrainageIntrusionAlarm"));
-        deviceState.put("EncloserAlarm", getValue(doc, "EncloserAlarm"));
-        deviceState.put("LidAlarm", getValue(doc, "LidAlarm"));
-        deviceState.put("ServiceMode", getValue(doc, "ServiceMode"));
-        deviceState.put("FenceStaus", getValue(doc, "FenceStaus"));
-        deviceState.put("LightStaus", getValue(doc, "LightStaus"));
+        httpdeviceState.put("IntrusionAlarm", getValue(doc, "IntrusionAlarm"));
+        httpdeviceState.put("DrainageIntrusionAlarm", getValue(doc, "DrainageIntrusionAlarm"));
+        httpdeviceState.put("EncloserAlarm", getValue(doc, "EncloserAlarm"));
+        httpdeviceState.put("LidAlarm", getValue(doc, "LidAlarm"));
+        httpdeviceState.put("ServiceMode", getValue(doc, "ServiceMode"));
+        httpdeviceState.put("FenceStaus", getValue(doc, "FenceStaus"));
+        httpdeviceState.put("LightStaus", getValue(doc, "LightStaus"));
 
         return List.of(
                 new StatusIndicator("Intrusion", getValue(doc, "IntrusionAlarm")),
@@ -162,17 +164,17 @@ public class Controller {
 
     public void createControlButtons(String ip) {
         // Clear existing controls
-        controlsContainer.getChildren().clear();
+        httpcontrolsContainer.getChildren().clear();
 
         // Add label for the controls section
         Label controlsLabel = new Label("HTTP Status Controls");
         controlsLabel.setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
-        controlsContainer.getChildren().add(controlsLabel);
+        httpcontrolsContainer.getChildren().add(controlsLabel);
 
         // Create control rows with toggle buttons
-        createControlRow("Fence System", "1", ip, deviceState.getOrDefault("FenceStaus", false));
-        createControlRow("Gadget System", "2", ip, deviceState.getOrDefault("LightStaus", false));
-        createControlRow("Service Mode", "3", ip, deviceState.getOrDefault("ServiceMode", false));
+        createControlRow("Fence System", "1", ip, httpdeviceState.getOrDefault("FenceStaus", false));
+        createControlRow("Gadget System", "2", ip, httpdeviceState.getOrDefault("LightStaus", false));
+        createControlRow("Service Mode", "3", ip, httpdeviceState.getOrDefault("ServiceMode", false));
     }
 
     private void createControlRow(String label, String key, String ip, boolean initialState) {
@@ -202,7 +204,7 @@ public class Controller {
         });
 
         row.getChildren().addAll(nameLabel, toggleButton);
-        controlsContainer.getChildren().add(row);
+        httpcontrolsContainer.getChildren().add(row);
     }
 
     private String getToggleButtonStyle(boolean isOn) {
@@ -216,7 +218,7 @@ public class Controller {
         String urlString = "http://" + ip + "/leds.cgi?led=" + key;
 
         // Add to response area
-        responseArea.appendText("\n\nSending command: " + urlString);
+        httpresponseArea.appendText("\n\nSending command: " + urlString);
 
         new Thread(() -> {
             try {
@@ -244,13 +246,13 @@ public class Controller {
 
                 // Update UI on the JavaFX thread
                 Platform.runLater(() -> {
-                    responseArea.appendText(responseText.toString());
+                    httpresponseArea.appendText(responseText.toString());
                 });
 
                 conn.disconnect();
             } catch (Exception e) {
                 Platform.runLater(() -> {
-                    responseArea.appendText("\nError sending command: " + e.getMessage());
+                    httpresponseArea.appendText("\nError sending command: " + e.getMessage());
                 });
             }
         }).start();
@@ -326,18 +328,18 @@ public class Controller {
 
                         // Add to response area if requested
                         if (showInResponseArea) {
-                            responseArea.appendText("\n\n--- Status Refresh ---\n" + responseText);
+                            httpresponseArea.appendText("\n\n--- Status Refresh ---\n" + responseText);
                         }
                     } catch (Exception e) {
                         if (showInResponseArea) {
-                            responseArea.appendText("\nError updating status: " + e.getMessage());
+                            httpresponseArea.appendText("\nError updating status: " + e.getMessage());
                         }
                     }
                 });
             } else if (showInResponseArea) {
                 final int statusCode = status;
                 Platform.runLater(() -> {
-                    responseArea.appendText("\nRefresh failed with status code: " + statusCode);
+                    httpresponseArea.appendText("\nRefresh failed with status code: " + statusCode);
                 });
             }
 
@@ -346,7 +348,7 @@ public class Controller {
             if (showInResponseArea) {
                 final String errorMsg = e.getMessage();
                 Platform.runLater(() -> {
-                    responseArea.appendText("\nError refreshing status: " + errorMsg);
+                    httpresponseArea.appendText("\nError refreshing status: " + errorMsg);
                 });
             }
 

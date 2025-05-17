@@ -3,70 +3,366 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="661.0" prefWidth="1120.0" styleClass="root" stylesheets="@../../../../java/com/example/fencedeviceapp/styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fencedeviceapp.Controller">
+<AnchorPane prefHeight="700.0" prefWidth="1200.0" styleClass="main-background" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fencedeviceapp.Controller">
     <children>
-        <VBox layoutX="29.0" layoutY="50.0" prefWidth="963.0" spacing="15.0">
+        <!-- Header Section -->
+        <HBox alignment="CENTER_LEFT" layoutX="0.0" layoutY="0.0" prefHeight="70.0" prefWidth="1200.0" styleClass="header-section">
             <padding>
-                <Insets bottom="10" left="10" right="10" top="10" />
+                <Insets left="20.0" right="20.0" />
             </padding>
             <children>
-            <TabPane prefHeight="551.0" prefWidth="960.0" tabClosingPolicy="UNAVAILABLE">
-              <tabs>
-                <Tab text="HTTP Data">
-                  <content>
-                    <AnchorPane minHeight="447.0" minWidth="0.0" prefHeight="508.0" prefWidth="941.0">
-                           <children>
-
-                              <VBox fx:id="httpcontrolsContainer" layoutX="6.0" layoutY="14.0" prefHeight="242.0" prefWidth="450.0" spacing="10">
-                                 <padding>
-                                    <Insets bottom="10" left="10" right="10" top="10" />
-                                 </padding>
-                              </VBox>
-                               <!-- Title for status section -->
-                               <Label text="Device Status" style="-fx-font-size: 14; -fx-font-weight: bold;"/>
-                              <VBox fx:id="httpstatusContainer" layoutX="7.0" layoutY="260.0" prefHeight="251.0" prefWidth="449.0" spacing="5">
-                                 <padding>
-                                    <Insets bottom="10" left="10" right="10" top="10" />
-                                 </padding>
-                              </VBox>
-                              <TextArea fx:id="httpresponseArea" layoutX="475.0" layoutY="21.0" prefHeight="470.0" prefWidth="443.0" />
-                           </children>
-                        </AnchorPane>
-                  </content>
-                </Tab>
-                  <Tab text="TCP Data">
-                     <content>
-                        <AnchorPane minHeight="447.0" minWidth="0.0" prefHeight="508.0" prefWidth="941.0">
-                           <children>
-                              <VBox fx:id="controlsContainer1" layoutX="6.0" layoutY="14.0" prefHeight="242.0" prefWidth="450.0" spacing="10">
-                                 <padding>
-                                    <Insets bottom="10" left="10" right="10" top="10" />
-                                 </padding>
-                              </VBox>
-                              <VBox fx:id="statusContainer1" layoutX="7.0" layoutY="260.0" prefHeight="251.0" prefWidth="449.0" spacing="5">
-                                 <padding>
-                                    <Insets bottom="10" left="10" right="10" top="10" />
-                                 </padding>
-                              </VBox>
-                              <TextArea fx:id="responseArea1" layoutX="475.0" layoutY="21.0" prefHeight="434.0" prefWidth="443.0" />
-                           </children>
-                        </AnchorPane>
-                     </content>
-                  </Tab>
-              </tabs>
-            </TabPane>
+                <!-- App Logo/Icon -->
+<!--                <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">-->
+<!--                    <image>-->
+<!--                        <Image url="@../../../../java/com/example/fencedeviceapp/images/fence_icon.png" />-->
+<!--                    </image>-->
+<!--                </ImageView>-->
+                <!-- App Title -->
+                <Label styleClass="app-title" text="Fence Device Control Panel">
+                    <HBox.margin>
+                        <Insets left="15.0" />
+                    </HBox.margin>
+                    <font>
+                        <Font name="System Bold" size="24.0" />
+                    </font>
+                </Label>
+                <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                    <!-- Connection Status Indicator -->
+                    <children>
+                        <Label fx:id="connectionStatusLabel" styleClass="status-disconnected" text="Disconnected">
+                            <HBox.margin>
+                                <Insets right="10.0" />
+                            </HBox.margin>
+                        </Label>
+                        <Separator orientation="VERTICAL" prefHeight="30.0" />
+                        <!-- Auto-refresh Info -->
+                        <Label styleClass="info-text" text="Auto-refresh interval: 3s">
+                            <HBox.margin>
+                                <Insets left="10.0" />
+                            </HBox.margin>
+                        </Label>
+                    </children>
+                </HBox>
             </children>
-        </VBox>
-            <TextField fx:id="ipField" layoutX="177.0" layoutY="25.0" minWidth="200" promptText="e.g., 192.168.1.100" styleClass="text-field" stylesheets="@../../../../java/com/example/fencedeviceapp/styles.css" />
-            <Label layoutX="41.0" layoutY="28.0" minWidth="100" styleClass="section-title" stylesheets="@../../../../java/com/example/fencedeviceapp/styles.css" text="Enter IP Address" />
-            <Button layoutX="391.0" layoutY="26.0" onAction="#handleConnect" prefWidth="100" stylesheets="@../../../../java/com/example/fencedeviceapp/styles.css" text="Connect" />
-            <Label layoutX="810.0" layoutY="29.0" style="-fx-font-style: italic; -fx-text-fill: #555555;" text="Auto-refresh: Every 3 seconds" />
+        </HBox>
+
+        <!-- Connection Panel -->
+        <HBox alignment="CENTER_LEFT" layoutX="0.0" layoutY="70.0" prefHeight="60.0" prefWidth="1200.0" styleClass="connection-panel">
+            <padding>
+                <Insets left="20.0" right="20.0" />
+            </padding>
+            <children>
+                <Label styleClass="section-label" text="Device IP Address:">
+                    <HBox.margin>
+                        <Insets right="10.0" />
+                    </HBox.margin>
+                </Label>
+                <TextField fx:id="ipField" prefWidth="250.0" promptText="e.g., 192.168.1.100" styleClass="input-field" />
+                <Button fx:id="connectButton" mnemonicParsing="false" onAction="#handleConnect" styleClass="primary-button" text="Connect">
+                    <HBox.margin>
+                        <Insets left="10.0" />
+                    </HBox.margin>
+                </Button>
+                <Button fx:id="disconnectButton" mnemonicParsing="false" styleClass="secondary-button" text="Disconnect">
+                    <HBox.margin>
+                        <Insets left="10.0" />
+                    </HBox.margin>
+                </Button>
+            </children>
+        </HBox>
+
+        <!-- Main Content Section -->
+        <TabPane layoutX="0.0" layoutY="130.0" prefHeight="570.0" prefWidth="1200.0" styleClass="main-tab-pane" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <!-- HTTP Data Tab -->
+                <Tab text="HTTP Communication">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="1200.0">
+                            <children>
+                                <HBox layoutX="0.0" layoutY="0.0" prefHeight="530.0" prefWidth="1200.0" spacing="15.0">
+                                    <padding>
+                                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                    </padding>
+                                    <children>
+                                        <!-- Left Panel - HTTP Controls -->
+                                        <VBox prefHeight="500.0" prefWidth="500.0">
+                                            <children>
+                                                <!-- HTTP Control Section -->
+                                                <TitledPane animated="true" collapsible="false" prefHeight="250.0" text="Device Controls" textFill="#2c3e50">
+                                                    <content>
+                                                        <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+                                                            <content>
+                                                                <VBox fx:id="httpcontrolsContainer" prefHeight="210.0" prefWidth="480.0" spacing="10.0" styleClass="controls-panel">
+                                                                    <padding>
+                                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                                    </padding>
+                                                                </VBox>
+                                                            </content>
+                                                        </ScrollPane>
+                                                    </content>
+                                                </TitledPane>
+
+                                                <!-- HTTP Status Section -->
+                                                <TitledPane animated="true" collapsible="false" prefHeight="250.0" text="Device Status" textFill="#2c3e50">
+                                                    <VBox.margin>
+                                                        <Insets top="15.0" />
+                                                    </VBox.margin>
+                                                    <content>
+                                                        <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+                                                            <content>
+                                                                <VBox fx:id="httpstatusContainer" prefHeight="210.0" prefWidth="480.0" spacing="8.0" styleClass="status-panel">
+                                                                    <padding>
+                                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                                    </padding>
+                                                                </VBox>
+                                                            </content>
+                                                        </ScrollPane>
+                                                    </content>
+                                                </TitledPane>
+                                            </children>
+                                        </VBox>
+
+                                        <!-- Right Panel - HTTP Response -->
+                                        <VBox prefHeight="500.0" prefWidth="650.0">
+                                            <children>
+                                                <TitledPane animated="true" collapsible="false" prefHeight="500.0" text="HTTP Response Data" textFill="#2c3e50">
+                                                    <content>
+                                                        <VBox spacing="10.0">
+                                                            <children>
+                                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                                    <children>
+                                                                        <Label styleClass="response-label" text="Last Updated:" />
+                                                                        <Label fx:id="httpLastUpdateLabel" styleClass="timestamp-label" text="Never" />
+                                                                        <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                                                            <children>
+                                                                                <Button fx:id="httpRefreshButton" mnemonicParsing="false" styleClass="refresh-button" text="Refresh Now" />
+                                                                                <Button fx:id="httpClearButton" mnemonicParsing="false" styleClass="clear-button" text="Clear">
+                                                                                    <HBox.margin>
+                                                                                        <Insets left="10.0" />
+                                                                                    </HBox.margin>
+                                                                                </Button>
+                                                                            </children>
+                                                                        </HBox>
+                                                                    </children>
+                                                                </HBox>
+                                                                <TextArea fx:id="httpresponseArea" editable="false" prefHeight="435.0" prefWidth="630.0" styleClass="response-area" wrapText="true" />
+                                                            </children>
+                                                            <padding>
+                                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                            </padding>
+                                                        </VBox>
+                                                    </content>
+                                                </TitledPane>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+
+                <!-- TCP Data Tab -->
+                <Tab text="TCP Communication">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="1200.0">
+                            <children>
+                                <HBox layoutX="0.0" layoutY="0.0" prefHeight="530.0" prefWidth="1200.0" spacing="15.0">
+                                    <padding>
+                                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                                    </padding>
+                                    <children>
+                                        <!-- Left Panel - TCP Controls -->
+                                        <VBox prefHeight="500.0" prefWidth="500.0">
+                                            <children>
+                                                <!-- TCP Control Section -->
+                                                <TitledPane animated="true" collapsible="false" prefHeight="250.0" text="TCP Controls" textFill="#2c3e50">
+                                                    <content>
+                                                        <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+                                                            <content>
+                                                                <VBox fx:id="controlsContainer1" prefHeight="210.0" prefWidth="480.0" spacing="10.0" styleClass="controls-panel">
+                                                                    <padding>
+                                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                                    </padding>
+                                                                </VBox>
+                                                            </content>
+                                                        </ScrollPane>
+                                                    </content>
+                                                </TitledPane>
+
+                                                <!-- TCP Status Section -->
+                                                <TitledPane animated="true" collapsible="false" prefHeight="250.0" text="TCP Status" textFill="#2c3e50">
+                                                    <VBox.margin>
+                                                        <Insets top="15.0" />
+                                                    </VBox.margin>
+                                                    <content>
+                                                        <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+                                                            <content>
+                                                                <VBox fx:id="statusContainer1" prefHeight="210.0" prefWidth="480.0" spacing="8.0" styleClass="status-panel">
+                                                                    <padding>
+                                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                                    </padding>
+                                                                </VBox>
+                                                            </content>
+                                                        </ScrollPane>
+                                                    </content>
+                                                </TitledPane>
+                                            </children>
+                                        </VBox>
+
+                                        <!-- Right Panel - TCP Response -->
+                                        <VBox prefHeight="500.0" prefWidth="650.0">
+                                            <children>
+                                                <TitledPane animated="true" collapsible="false" prefHeight="500.0" text="TCP Response Data" textFill="#2c3e50">
+                                                    <content>
+                                                        <VBox spacing="10.0">
+                                                            <children>
+                                                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                                                    <children>
+                                                                        <Label styleClass="response-label" text="Last Updated:" />
+                                                                        <Label fx:id="tcpLastUpdateLabel" styleClass="timestamp-label" text="Never" />
+                                                                        <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                                                            <children>
+                                                                                <Button fx:id="tcpRefreshButton" mnemonicParsing="false" styleClass="refresh-button" text="Refresh Now" />
+                                                                                <Button fx:id="tcpClearButton" mnemonicParsing="false" styleClass="clear-button" text="Clear">
+                                                                                    <HBox.margin>
+                                                                                        <Insets left="10.0" />
+                                                                                    </HBox.margin>
+                                                                                </Button>
+                                                                            </children>
+                                                                        </HBox>
+                                                                    </children>
+                                                                </HBox>
+                                                                <TextArea fx:id="responseArea1" editable="false" prefHeight="435.0" prefWidth="630.0" styleClass="response-area" wrapText="true" />
+                                                            </children>
+                                                            <padding>
+                                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                            </padding>
+                                                        </VBox>
+                                                    </content>
+                                                </TitledPane>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+
+                <!-- Settings Tab (New) -->
+                <Tab text="Settings">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="1200.0">
+                            <children>
+                                <VBox layoutX="15.0" layoutY="15.0" prefHeight="500.0" prefWidth="1170.0" spacing="15.0">
+                                    <children>
+                                        <TitledPane animated="true" collapsible="false" prefHeight="150.0" text="Connection Settings" textFill="#2c3e50">
+                                            <content>
+                                                <GridPane hgap="15.0" vgap="15.0">
+                                                    <columnConstraints>
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    </columnConstraints>
+                                                    <padding>
+                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                    </padding>
+                                                    <children>
+                                                        <Label text="Auto-refresh Interval (seconds):" GridPane.rowIndex="0" />
+                                                        <TextField fx:id="refreshIntervalField" prefWidth="100.0" text="3" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                                                        <Label text="Connection Timeout (seconds):" GridPane.rowIndex="1" />
+                                                        <TextField fx:id="connectionTimeoutField" prefWidth="100.0" text="30" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                                                        <Button fx:id="saveSettingsButton" mnemonicParsing="false" styleClass="primary-button" text="Save Settings" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                    </children>
+                                       <rowConstraints>
+                                          <RowConstraints />
+                                          <RowConstraints />
+                                          <RowConstraints />
+                                       </rowConstraints>
+                                                </GridPane>
+                                            </content>
+                                        </TitledPane>
+
+                                        <TitledPane animated="true" collapsible="false" prefHeight="150.0" text="Display Settings" textFill="#2c3e50">
+                                            <content>
+                                                <GridPane hgap="15.0" vgap="15.0">
+                                                    <columnConstraints>
+                                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="10.0" prefWidth="200.0" />
+                                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                    </columnConstraints>
+                                                    <padding>
+                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                    </padding>
+                                                    <children>
+                                                        <Label text="Theme:" GridPane.rowIndex="0" />
+                                                        <HBox alignment="CENTER_LEFT" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                                            <children>
+                                                                <Button fx:id="lightThemeButton" mnemonicParsing="false" styleClass="theme-button" text="Light" />
+                                                                <Button fx:id="darkThemeButton" mnemonicParsing="false" styleClass="theme-button" text="Dark" />
+                                                                <Button fx:id="systemThemeButton" mnemonicParsing="false" styleClass="theme-button-active" text="System" />
+                                                            </children>
+                                                        </HBox>
+
+                                                        <Label text="Font Size:" GridPane.rowIndex="1" />
+                                                        <HBox alignment="CENTER_LEFT" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                            <children>
+                                                                <Button fx:id="smallFontButton" mnemonicParsing="false" styleClass="font-button" text="Small" />
+                                                                <Button fx:id="mediumFontButton" mnemonicParsing="false" styleClass="font-button-active" text="Medium" />
+                                                                <Button fx:id="largeFontButton" mnemonicParsing="false" styleClass="font-button" text="Large" />
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                       <rowConstraints>
+                                          <RowConstraints />
+                                          <RowConstraints />
+                                       </rowConstraints>
+                                                </GridPane>
+                                            </content>
+                                        </TitledPane>
+
+                                        <TitledPane animated="true" collapsible="false" prefHeight="170.0" text="About" textFill="#2c3e50">
+                                            <content>
+                                                <VBox spacing="10.0">
+                                                    <padding>
+                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                    </padding>
+                                                    <children>
+                                                        <Label styleClass="about-title" text="Fence Device Control Panel v1.0.0" />
+                                                        <Label styleClass="about-text" text="This application allows you to monitor and control your fence devices through HTTP and TCP protocols." wrapText="true" />
+                                                        <Label styleClass="about-text" text="© 2025 Your Company. All rights reserved." />
+                                                        <HBox alignment="CENTER_RIGHT">
+                                                            <children>
+                                                                <Button fx:id="checkUpdatesButton" mnemonicParsing="false" styleClass="secondary-button" text="Check for Updates" />
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
     </children>
 </AnchorPane>

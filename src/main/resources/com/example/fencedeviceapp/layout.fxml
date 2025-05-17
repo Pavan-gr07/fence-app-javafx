@@ -18,6 +18,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 <AnchorPane prefHeight="700.0" prefWidth="1200.0" styleClass="main-background" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fencedeviceapp.Controller">
     <children>
         <!-- Header Section -->
@@ -26,13 +28,11 @@
                 <Insets left="20.0" right="20.0" />
             </padding>
             <children>
-                <!-- App Logo/Icon -->
-<!--                <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">-->
-<!--                    <image>-->
-<!--                        <Image url="@../../../../java/com/example/fencedeviceapp/images/fence_icon.png" />-->
-<!--                    </image>-->
-<!--                </ImageView>-->
-                <!-- App Title -->
+                <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@Crown_logo.png" />
+                    </image>
+                </ImageView>
                 <Label styleClass="app-title" text="Fence Device Control Panel">
                     <HBox.margin>
                         <Insets left="15.0" />

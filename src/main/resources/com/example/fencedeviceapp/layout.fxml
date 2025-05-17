@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -18,21 +19,21 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
-<AnchorPane prefHeight="700.0" prefWidth="1200.0" styleClass="main-background" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fencedeviceapp.Controller">
+<AnchorPane prefHeight="700.0" prefWidth="1200.0" styleClass="main-background" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.fencedeviceapp.Controller">
     <children>
         <!-- Header Section -->
-        <HBox alignment="CENTER_LEFT" layoutX="0.0" layoutY="0.0" prefHeight="70.0" prefWidth="1200.0" styleClass="header-section">
+        <HBox alignment="CENTER_LEFT" layoutX="0.0" layoutY="0.0" prefHeight="70.0" prefWidth="1200.0" styleClass="header-section" stylesheets="@styles.css">
             <padding>
                 <Insets left="20.0" right="20.0" />
             </padding>
             <children>
-                <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@Crown_logo.png" />
-                    </image>
-                </ImageView>
+                <!-- App Logo/Icon -->
+<!--                <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">-->
+<!--                    <image>-->
+<!--                        <Image url="@../../../../java/com/example/fencedeviceapp/images/fence_icon.png" />-->
+<!--                    </image>-->
+<!--                </ImageView>-->
+                <!-- App Title -->
                 <Label styleClass="app-title" text="Fence Device Control Panel">
                     <HBox.margin>
                         <Insets left="15.0" />
@@ -44,11 +45,6 @@
                 <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                     <!-- Connection Status Indicator -->
                     <children>
-                        <Label fx:id="connectionStatusLabel" styleClass="status-disconnected" text="Disconnected">
-                            <HBox.margin>
-                                <Insets right="10.0" />
-                            </HBox.margin>
-                        </Label>
                         <Separator orientation="VERTICAL" prefHeight="30.0" />
                         <!-- Auto-refresh Info -->
                         <Label styleClass="info-text" text="Auto-refresh interval: 3s">
@@ -62,7 +58,7 @@
         </HBox>
 
         <!-- Connection Panel -->
-        <HBox alignment="CENTER_LEFT" layoutX="0.0" layoutY="70.0" prefHeight="60.0" prefWidth="1200.0" styleClass="connection-panel">
+        <HBox alignment="CENTER_LEFT" layoutY="70.0" prefHeight="60.0" prefWidth="1200.0" styleClass="connection-panel" stylesheets="@../../../../java/com/example/fencedeviceapp/styles.css">
             <padding>
                 <Insets left="20.0" right="20.0" />
             </padding>
@@ -74,11 +70,6 @@
                 </Label>
                 <TextField fx:id="ipField" prefWidth="250.0" promptText="e.g., 192.168.1.100" styleClass="input-field" />
                 <Button fx:id="connectButton" mnemonicParsing="false" onAction="#handleConnect" styleClass="primary-button" text="Connect">
-                    <HBox.margin>
-                        <Insets left="10.0" />
-                    </HBox.margin>
-                </Button>
-                <Button fx:id="disconnectButton" mnemonicParsing="false" styleClass="secondary-button" text="Disconnect">
                     <HBox.margin>
                         <Insets left="10.0" />
                     </HBox.margin>
@@ -150,12 +141,7 @@
                                                                         <Label fx:id="httpLastUpdateLabel" styleClass="timestamp-label" text="Never" />
                                                                         <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                                                                             <children>
-                                                                                <Button fx:id="httpRefreshButton" mnemonicParsing="false" styleClass="refresh-button" text="Refresh Now" />
-                                                                                <Button fx:id="httpClearButton" mnemonicParsing="false" styleClass="clear-button" text="Clear">
-                                                                                    <HBox.margin>
-                                                                                        <Insets left="10.0" />
-                                                                                    </HBox.margin>
-                                                                                </Button>
+                                                                                <Button fx:id="httpRefreshButton" mnemonicParsing="false" onAction="#handleConnect" styleClass="refresh-button" text="Refresh Now" />
                                                                             </children>
                                                                         </HBox>
                                                                     </children>
@@ -238,12 +224,7 @@
                                                                         <Label fx:id="tcpLastUpdateLabel" styleClass="timestamp-label" text="Never" />
                                                                         <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                                                                             <children>
-                                                                                <Button fx:id="tcpRefreshButton" mnemonicParsing="false" styleClass="refresh-button" text="Refresh Now" />
-                                                                                <Button fx:id="tcpClearButton" mnemonicParsing="false" styleClass="clear-button" text="Clear">
-                                                                                    <HBox.margin>
-                                                                                        <Insets left="10.0" />
-                                                                                    </HBox.margin>
-                                                                                </Button>
+                                                                                <Button mnemonicParsing="false" onAction="#handleConnect" styleClass="refresh-button" text="Refresh Now" />
                                                                             </children>
                                                                         </HBox>
                                                                     </children>
@@ -365,4 +346,8 @@
             </tabs>
         </TabPane>
     </children>
+   <stylesheets>
+      <URL value="@../../../../java/com/example/fencedeviceapp/styles.css" />
+      <URL value="@styles.css" />
+   </stylesheets>
 </AnchorPane>

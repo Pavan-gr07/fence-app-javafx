@@ -59,10 +59,8 @@ public class Controller {
     private static final int TCP_PORT = 1515; // Default Telnet port, adjust as needed
     private static final int TCP_TIMEOUT = 10000; // 5 seconds
 
-    @FXML
-    public void initialize() {
-        // Initialize UI components if needed
-    }
+
+
 
     // HTTP CONNECTION HANDLING
     @FXML
@@ -454,24 +452,7 @@ public class Controller {
         }).start();
     }
 
-    // Class to represent status indicators (if you're using this elsewhere)
-    public static class StatusIndicator {
-        private final String label;
-        private final boolean status;
 
-        public StatusIndicator(String label, boolean status) {
-            this.label = label;
-            this.status = status;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public boolean isStatus() {
-            return status;
-        }
-    }
 
 
 

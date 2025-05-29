@@ -244,8 +244,8 @@ public class Controller {
         httpcontrolsContainer.getChildren().add(controlsLabel);
 
         // Create control rows with the same styling as TCP
-        createHttpControlRow("Fence System", "1", ip, httpdeviceState.getOrDefault("FenceStaus", false));
-        createHttpControlRow("Light System", "2", ip, httpdeviceState.getOrDefault("LightStaus", false));
+        createHttpControlRow("Energizer Status", "1", ip, httpdeviceState.getOrDefault("FenceStaus", false));
+        createHttpControlRow("Gadget Status", "2", ip, httpdeviceState.getOrDefault("LightStaus", false));
 //        createHttpControlRow("Service Mode", "3", ip, httpdeviceState.getOrDefault("ServiceMode", false));
         // Add alarm acknowledgment button if alarm is active
         if (httpdeviceState.getOrDefault("IntrusionAlarm", false)) {
@@ -261,38 +261,83 @@ public class Controller {
     }
 
     private void createHttpControlRow(String label, String key, String ip, boolean initialState) {
-        HBox row = new HBox(10);
-        row.setStyle("-fx-padding: 10; -fx-background-color: #f0f8ff; -fx-background-radius: 5;");
-        row.setPrefHeight(40);
-
         Label nameLabel = new Label(label);
         nameLabel.setStyle("-fx-font-weight: bold;");
         nameLabel.setMinWidth(150);
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
-        ToggleButton toggleButton = new ToggleButton(initialState ? "ON" : "OFF");
-        toggleButton.setSelected(initialState);
-        toggleButton.setStyle(getToggleButtonStyle(initialState));
+        // Create ON button
+        Button onButton = new Button("ON");
+        onButton.setStyle(getButtonStyle(true, initialState));
+        onButton.setDisable(initialState); // Disable if already ON
+        onButton.setMinWidth(60);
 
-        toggleButton.setOnAction(event -> {
-            boolean isOn = toggleButton.isSelected();
-            toggleButton.setText(isOn ? "ON" : "OFF");
-            toggleButton.setStyle(getToggleButtonStyle(isOn));
-            sendHttpControlCommand(ip, key, isOn);
+        // Create OFF button - FIXED THE LOGIC HERE
+        Button offButton = new Button("OFF");
+        offButton.setStyle(getButtonStyle(false, initialState)); // Pass initialState directly
+        offButton.setDisable(!initialState); // Disable if device is OFF (initialState is false)
+
+        // ON button action
+        onButton.setOnAction(event -> {
+            onButton.setDisable(true);
+            offButton.setDisable(false);
+            onButton.setStyle(getButtonStyle(true, true));
+            offButton.setStyle(getButtonStyle(false, true));
+
+            // Update row background color
+            HBox row = (HBox) onButton.getParent().getParent();
+            row.setStyle("-fx-padding: 10; -fx-background-color: #e8f5e8; -fx-background-radius: 5;");
+
+            sendHttpControlCommand(ip, key, true);
         });
 
-        row.getChildren().addAll(nameLabel, toggleButton);
+        // OFF button action
+        offButton.setOnAction(event -> {
+            offButton.setDisable(true);
+            onButton.setDisable(false);
+            onButton.setStyle(getButtonStyle(true, false));
+            offButton.setStyle(getButtonStyle(false, false));
+
+            // Update row background color
+            HBox row = (HBox) offButton.getParent().getParent();
+            row.setStyle("-fx-padding: 10; -fx-background-color: #ffe8e8; -fx-background-radius: 5;");
+
+            sendHttpControlCommand(ip, key, false);
+        });
+
+        HBox buttonContainer = new HBox(5, onButton, offButton);
+        HBox row = new HBox(10, nameLabel, buttonContainer);
+
+        String backgroundColor = initialState ? "#e8f5e8" : "#ffe8e8";
+        row.setStyle("-fx-padding: 10; -fx-background-color: " + backgroundColor + "; -fx-background-radius: 5;");
+        row.setPrefHeight(40);
+
         httpcontrolsContainer.getChildren().add(row);
     }
 
-    private String getToggleButtonStyle(boolean isOn) {
-        return "-fx-background-color: " + (isOn ? "#4CAF50" : "#f44336") + ";" +
-                "-fx-text-fill: white;" +
-                "-fx-font-weight: bold;" +
-                "-fx-min-width: 80px;";
+    private String getButtonStyle(boolean isOnButton, boolean deviceIsOn) {
+        if (isOnButton) {
+            // ON button styling
+            if (deviceIsOn) {
+                // Device is ON, so ON button should be disabled/faded
+                return "-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-opacity: 0.6;";
+            } else {
+                // Device is OFF, so ON button should be active
+                return "-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;";
+            }
+        } else {
+            // OFF button styling
+            if (deviceIsOn) {
+                // Device is ON, so OFF button should be active
+                return "-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold;";
+            } else {
+                // Device is OFF, so OFF button should be disabled/faded
+                return "-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-opacity: 0.6;";
+            }
+        }
     }
 
-    // Send HTTP command to control device
+
     private void sendHttpControlCommand(String ip, String key, boolean isOn) {
         // Construct command URL - add state parameter to URL if needed
         String urlString = "http://" + ip + "/leds.cgi?led=" + key;
@@ -901,8 +946,8 @@ public class Controller {
         controlsLabel.setStyle("-fx-font-size: 14; -fx-font-weight: bold;");
         controlsContainer1.getChildren().add(controlsLabel);
 
-        createTcpControlRow("Fence System", "FENCE", ip, tcpdeviceState.getOrDefault("Fence", false));
-        createTcpControlRow("Light System", "LIGHT", ip, tcpdeviceState.getOrDefault("Light", false));
+        createTcpControlRow("Energizers Status", "FENCE", ip, tcpdeviceState.getOrDefault("Fence", false));
+        createTcpControlRow("Gadget Status", "LIGHT", ip, tcpdeviceState.getOrDefault("Light", false));
         createTcpControlRow("Service Mode", "SERVICE", ip, tcpdeviceState.getOrDefault("Service", false));
 
         // Add alarm acknowledgment button if alarm is active
@@ -919,37 +964,82 @@ public class Controller {
     }
 
     private void createTcpControlRow(String label, String command, String ip, boolean initialState) {
-        HBox row = new HBox(10);
-        row.setStyle("-fx-padding: 10; -fx-background-color: #f0f8ff; -fx-background-radius: 5;");
-        row.setPrefHeight(40);
-
         Label nameLabel = new Label(label);
         nameLabel.setStyle("-fx-font-weight: bold;");
         nameLabel.setMinWidth(150);
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
-        ToggleButton toggleButton = new ToggleButton(initialState ? "ON" : "OFF");
-        toggleButton.setSelected(initialState);
-        toggleButton.setStyle(getToggleButtonStyleTCP(initialState));
+        // Create ON button
+        Button onButton = new Button("ON");
+        onButton.setStyle(getTcpButtonStyle(true, initialState));
+        onButton.setDisable(initialState); // Disable if already ON
+        onButton.setMinWidth(60);
 
-        toggleButton.setOnAction(event -> {
-            boolean isOn = toggleButton.isSelected();
-            toggleButton.setText(isOn ? "ON" : "OFF");
-            toggleButton.setStyle(getToggleButtonStyleTCP(isOn));
-            sendTcpControlCommand(ip, command, isOn);
+        // Create OFF button
+        Button offButton = new Button("OFF");
+        offButton.setStyle(getTcpButtonStyle(false, initialState));
+        offButton.setDisable(!initialState); // Disable if device is OFF (initialState is false)
+
+        // ON button action
+        onButton.setOnAction(event -> {
+            onButton.setDisable(true);
+            offButton.setDisable(false);
+            onButton.setStyle(getTcpButtonStyle(true, true));
+            offButton.setStyle(getTcpButtonStyle(false, true));
+
+            // Update row background color
+            HBox row = (HBox) onButton.getParent().getParent();
+            row.setStyle("-fx-padding: 10; -fx-background-color: #e8f5e8; -fx-background-radius: 5;");
+
+            sendTcpControlCommand(ip, command, true);
         });
 
-        row.getChildren().addAll(nameLabel, toggleButton);
+        // OFF button action
+        offButton.setOnAction(event -> {
+            offButton.setDisable(true);
+            onButton.setDisable(false);
+            onButton.setStyle(getTcpButtonStyle(true, false));
+            offButton.setStyle(getTcpButtonStyle(false, false));
+
+            // Update row background color
+            HBox row = (HBox) offButton.getParent().getParent();
+            row.setStyle("-fx-padding: 10; -fx-background-color: #ffe8e8; -fx-background-radius: 5;");
+
+            sendTcpControlCommand(ip, command, false);
+        });
+
+        HBox buttonContainer = new HBox(5, onButton, offButton);
+        HBox row = new HBox(10, nameLabel, buttonContainer);
+
+        // Set initial background color based on device state
+        String backgroundColor = initialState ? "#e8f5e8" : "#ffe8e8";
+        row.setStyle("-fx-padding: 10; -fx-background-color: " + backgroundColor + "; -fx-background-radius: 5;");
+        row.setPrefHeight(40);
+
         controlsContainer1.getChildren().add(row);
     }
 
-    private String getToggleButtonStyleTCP(boolean isOn) {
-        return "-fx-background-color: " + (isOn ? "#4CAF50" : "#f44336") + ";" +
-                "-fx-text-fill: white;" +
-                "-fx-font-weight: bold;" +
-                "-fx-min-width: 80px;";
+    private String getTcpButtonStyle(boolean isOnButton, boolean deviceIsOn) {
+        if (isOnButton) {
+            // ON button styling
+            if (deviceIsOn) {
+                // Device is ON, so ON button should be disabled/faded
+                return "-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-opacity: 0.6;";
+            } else {
+                // Device is OFF, so ON button should be active
+                return "-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;";
+            }
+        } else {
+            // OFF button styling
+            if (deviceIsOn) {
+                // Device is ON, so OFF button should be active
+                return "-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold;";
+            } else {
+                // Device is OFF, so OFF button should be disabled/faded
+                return "-fx-background-color: #f44336; -fx-text-fill: white; -fx-font-weight: bold; -fx-opacity: 0.6;";
+            }
+        }
     }
-
     private void startTcpRefreshTimer() {
         stopTcpRefreshTimer(); // Ensure we don't have multiple timers
 

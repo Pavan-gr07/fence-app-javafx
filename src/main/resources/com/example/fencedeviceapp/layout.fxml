@@ -177,7 +177,7 @@
                                         <VBox prefHeight="500.0" prefWidth="500.0">
                                             <children>
                                                 <!-- TCP Control Section -->
-                                                <TitledPane animated="true" collapsible="false" prefHeight="250.0" text="TCP Controls" textFill="#2c3e50">
+                                                <TitledPane animated="true" collapsible="false" prefHeight="250.0" text="Device Controls" textFill="#2c3e50">
                                                     <content>
                                                         <ScrollPane fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
                                                             <content>
@@ -192,7 +192,7 @@
                                                 </TitledPane>
 
                                                 <!-- TCP Status Section -->
-                                                <TitledPane animated="true" collapsible="false" prefHeight="250.0" text="TCP Status" textFill="#2c3e50">
+                                                <TitledPane animated="true" collapsible="false" prefHeight="250.0" text="Device Status" textFill="#2c3e50">
                                                     <VBox.margin>
                                                         <Insets top="15.0" />
                                                     </VBox.margin>

@@ -13,7 +13,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("layout.fxml"));
-        primaryStage.setScene(new Scene(loader.load()));
+        Scene scene = new Scene(loader.load(), 1200, 700);
+        primaryStage.setScene(scene);
         primaryStage.setTitle("Device Status Monitor");
 
         // Set the window icon
@@ -22,6 +23,9 @@ public class Main extends Application {
 
         // Get controller reference
         controller = loader.getController();
+
+        // Disable resizing
+        primaryStage.setResizable(false);
 
         // Set up close handler
         primaryStage.setOnCloseRequest(event -> {
